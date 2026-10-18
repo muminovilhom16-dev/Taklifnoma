@@ -1,6 +1,6 @@
 /* Taklifnoma musiqasi.
    O'rnatilgan kuylar brauzerda WebAudio orqali sintez qilinadi (fayl yo'q, mualliflik huquqi muammosi yo'q).
-   'url' turida mezbon bergan mp3 havolasi ijro etiladi. */
+   'f' turida mezbon yuklagan fayl (/api/music/:id), eski 'url' turida mp3 havolasi ijro etiladi. */
 (() => {
 const TRACKS = {
   dutor: {name: 'Dutor kuyi'},
@@ -114,6 +114,7 @@ window.TAKLIFNOMA_MUSIC = {
   TRACKS,
   create(kind, url) {
     if (TRACKS[kind] && (window.AudioContext || window.webkitAudioContext)) return synth(kind);
+    if (kind === 'f' && /^[A-Za-z0-9]{10}$/.test(url || '')) return fromUrl('/api/music/' + url);
     if (kind === 'url' && /^https:\/\//i.test(url || '')) return fromUrl(url);
     return null;
   }

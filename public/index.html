@@ -50,9 +50,9 @@
           <div class="f"><label for="f-cn">Karta egasi (ixtiyoriy)</label><input id="f-cn" maxlength="40" placeholder="Masalan: Karimov Jasur"></div>
           <p class="hint f full" id="ck-err" hidden>Karta raqami 16 ta raqamdan iborat bo‘lishi kerak.</p>
           <p class="hint f full">Karta raqami havolaning ichida ochiq turadi, havolani olgan har kim uni ko‘radi. Faqat raqamni yozing: amal qilish muddati va CVV kodini hech qachon kiritmang.</p>
-          <div class="f"><label for="f-mu">Musiqa</label><select id="f-mu"><option value="">Musiqasiz</option><option value="dutor">Dutor kuyi</option><option value="nay">Nay sadosi</option><option value="url">O‘z musiqam (mp3 havola)</option></select></div>
-          <div class="f" id="w-mq"><label for="f-mq">MP3 havolasi</label><input id="f-mq" type="url" placeholder="https://.../kuy.mp3"></div>
-          <p class="hint f full">Musiqa mehmon muhrni bosganda boshlanadi, o‘ng yuqoridagi tugma bilan o‘chiriladi. O‘z musiqangiz uchun to‘g‘ridan-to‘g‘ri .mp3 fayl havolasi kerak, YouTube havolasi ishlamaydi.</p>
+          <div class="f"><label for="f-mu">Musiqa</label><select id="f-mu"><option value="">Musiqasiz</option><option value="dutor">Dutor kuyi</option><option value="nay">Nay sadosi</option><option value="f">O‘z musiqam (fayl yuklash)</option></select></div>
+          <div class="f" id="w-mq"><label for="f-file">Musiqa fayli (mp3, m4a, 5 MB gacha)</label><input id="f-file" type="file" accept=".mp3,.m4a,.ogg,audio/mpeg,audio/mp4,audio/ogg"><input id="f-mq" type="hidden"><p class="hint" id="mq-st" aria-live="polite"></p></div>
+          <p class="hint f full">Musiqa mehmon muhrni bosganda boshlanadi, o‘ng yuqoridagi tugma bilan o‘chiriladi. O‘z musiqangizni telefoningizdan mp3 yoki m4a fayl qilib yuklang.</p>
           <div class="f full"><label for="f-f">Hurmat bilan (mezbonlar)</label><input id="f-f" maxlength="70"></div>
           <div class="f full"><label for="f-x">Qo‘shimcha so‘z (ixtiyoriy)</label><textarea id="f-x" maxlength="240" placeholder="Masalan: Tantana kiyim kodi: oq va oltin ranglar"></textarea></div>
         </div>
