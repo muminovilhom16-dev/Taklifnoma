@@ -2,13 +2,16 @@
    POST /api/invite        taklifnoma ma'lumotini saqlaydi, qisqa id qaytaradi
    GET  /api/invite/:id    saqlangan taklifnoma
    POST /api/music         mp3/m4a/ogg fayl (5 MB gacha), id qaytaradi
-   GET  /api/music/:id     faylni beradi (Range so'rovlari bilan, iPhone uchun shart) */
+   GET  /api/music/:id     faylni beradi (Range so'rovlari bilan, iPhone uchun shart)
+   GET  /api/auth          x-key sarlavhasidagi parolni tekshiradi
+   Netlify'da TAKLIF_KEY o'zgaruvchisi qo'yilsa, yozish (POST) faqat shu parol bilan ishlaydi. */
 import { getStore } from '@netlify/blobs';
 
 const ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
 const newId = n => Array.from(crypto.getRandomValues(new Uint8Array(n)), b => ABC[b % ABC.length]).join('');
 const MAX_INVITE = 16 * 1024, MAX_MUSIC = 5 * 1024 * 1024;
 const KEYS = ['t','e','a','b','g','d','h','v','ad','m','p','tg','ck','cn','mu','mq','f','x'];
+const authed = req => { const k = process.env.TAKLIF_KEY; return !k || req.headers.get('x-key') === k; };
 const json = (body, status = 200, extra = {}) => new Response(JSON.stringify(body), {status, headers: {'content-type': 'application/json; charset=utf-8', ...extra}});
 
 function audioType(b) {
@@ -32,6 +35,8 @@ export default async (req) => {
   const invites = getStore({name: 'invites', consistency: 'strong'});
   const music = getStore({name: 'music', consistency: 'strong'});
 
+  if (kind === 'auth') return authed(req) ? json({ok: true}) : json({error: 'Parol noto‘g‘ri'}, 401);
+  if (req.method === 'POST' && !authed(req)) return json({error: 'Parol noto‘g‘ri'}, 401);
   if (kind === 'invite' && req.method === 'POST' && !id) {
     const buf = await readLimited(req, MAX_INVITE);
     if (!buf) return json({error: 'Juda katta'}, 413);

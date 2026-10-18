@@ -360,6 +360,19 @@ let BASE = '';
 try { if (window.top === window.self && /^(https?|file):$/.test(location.protocol)) BASE = location.href.split('#')[0]; } catch (e) {}
 
 /* ---------- konstruktor ---------- */
+// Buyurtma tugmasi qayerga olib boradi (Telegram yoki Instagram havolasi)
+const CONTACT = '';
+const KEY_LS = 'taklif-key';
+const getKey = () => { try { return localStorage.getItem(KEY_LS) || ''; } catch (e) { return ''; } };
+async function checkKey(key) {
+  if (!/^https?:$/.test(location.protocol)) return true;
+  try { const r = await fetch('/api/auth', {headers: {'x-key': key}}); return r.ok; } catch (e) { return true; }
+}
+function setAdmin(on) {
+  document.querySelectorAll('.adm').forEach(el => el.hidden = !on);
+  $('#gate').hidden = on;
+  $('#openfull').hidden = !on;
+}
 const FIELDS = ['e','g','a','b','d','h','v','ad','m','p','tg','ck','cn','mu','mq','f','x'];
 const SAMPLE = {t:'samarqand', e:'nikoh', a:'Jasur', b:'Madina', g:'', d:'2026-11-21', h:'18:00', v:'“Oqsaroy” to‘yxonasi', ad:'Toshkent sh., Yunusobod tumani, Amir Temur ko‘chasi, 108', m:'', p:'+998 90 123 45 67', tg:'', ck:'', cn:'', mu:'dutor', mq:'', f:'Karimovlar va Rahimovlar oilalari', x:''};
 let state = {...SAMPLE};
@@ -383,6 +396,16 @@ function buildBuilder() {
   $('#openfull').addEventListener('click', () => { $('#full').hidden = false; document.body.style.overflow = 'hidden'; mount($('#fullwrap'), state, {cover: true, base: BASE}); });
   $('#closefull').addEventListener('click', () => { $('#fullwrap')._cleanup?.(); $('#fullwrap').innerHTML = ''; $('#full').hidden = true; document.body.style.overflow = ''; });
   $('#form').addEventListener('submit', async e => { e.preventDefault(); await generate(); });
+  $('#order').href = CONTACT || '#'; $('#order').hidden = !CONTACT;
+  $('#demo').addEventListener('click', () => $('#openfull').click());
+  $('#login').addEventListener('click', async () => {
+    const k = $('#key').value.trim();
+    $('#key-st').textContent = 'Tekshirilmoqda…';
+    if (await checkKey(k)) { try { localStorage.setItem(KEY_LS, k); } catch (e) {} $('#key-st').textContent = ''; setAdmin(true); }
+    else $('#key-st').textContent = 'Parol noto‘g‘ri.';
+  });
+  setAdmin(false);
+  checkKey(getKey()).then(setAdmin);
   $('#copy').addEventListener('click', () => {
     const url = $('#link').textContent, btn = $('#copy');
     const done = () => { btn.textContent = 'Nusxalandi'; setTimeout(() => btn.textContent = 'Nusxa olish', 1800); };
@@ -413,7 +436,7 @@ async function uploadMusic(e) {
   if (file.size > 5*1024*1024) { st.textContent = 'Fayl 5 MB dan katta. Qisqaroq yoki siqilgan mp3 tanlang.'; e.target.value = ''; return; }
   st.textContent = 'Yuklanmoqda…';
   try {
-    const r = await fetch('/api/music', {method: 'POST', headers: {'content-type': file.type || 'application/octet-stream'}, body: file});
+    const r = await fetch('/api/music', {method: 'POST', headers: {'content-type': file.type || 'application/octet-stream', 'x-key': getKey()}, body: file});
     const j = await r.json().catch(() => ({}));
     if (!r.ok || !j.id) throw new Error(j.error || 'Yuklab bo‘lmadi');
     state.mq = j.id; $('#f-mq').value = j.id;
@@ -426,7 +449,7 @@ async function saveShort(data) {
   const key = JSON.stringify(data);
   if (saved.key === key) return saved.id;
   try {
-    const r = await fetch('/api/invite', {method: 'POST', headers: {'content-type': 'application/json'}, body: key});
+    const r = await fetch('/api/invite', {method: 'POST', headers: {'content-type': 'application/json', 'x-key': getKey()}, body: key});
     const j = await r.json();
     if (r.ok && /^[A-Za-z0-9]{7}$/.test(j.id || '')) { saved = {key, id: j.id}; return j.id; }
   } catch (e) {}

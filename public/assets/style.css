@@ -218,3 +218,13 @@ body.solo{overflow:hidden}
 .ibox .dateline{font-size:clamp(10px,3.4cqi,15px);letter-spacing:.26em}
 .sw img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 72%}
 @media (prefers-reduced-motion: reduce){.anim .ihero img{transform:none;transition:none}}
+
+/* buyurtma bo'limi (konstruktor parol bilan yopilganda) */
+.pk{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.pk li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.pk b{font-family:var(--f-display);font-weight:400;font-size:18px}
+.pk span{font-weight:700;color:var(--lapis);font-variant-numeric:tabular-nums}
+.pk small{grid-column:1/-1;color:var(--muted);font-size:13px}
+.adm-in summary{cursor:pointer;color:var(--muted);font-size:13px}
+.adm-in .btns{margin-top:10px}
+.adm-in input{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0;flex:1 1 160px}
