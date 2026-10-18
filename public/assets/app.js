@@ -371,6 +371,7 @@ function buildBuilder() {
   document.querySelectorAll('[data-sw]').forEach(el => applyVars(el, TPL[el.dataset.sw], el.dataset.sw));
   document.querySelectorAll('.tpl').forEach(b => b.addEventListener('click', () => { state.t = b.dataset.k; syncTpl(); changed(true); }));
   FIELDS.forEach(k => { const el = $('#f-' + k); el.value = state[k] || ''; el.addEventListener('input', () => { state[k] = el.value.trim(); if (k === 'e') syncLabels(); if (k === 'mu' || k === 'ck') syncExtras(); changed(); }); });
+  $('#f-file').addEventListener('change', uploadMusic);
   syncTpl(); syncLabels(); syncExtras();
   let opened = false;
   const pv = $('#pv');
@@ -396,7 +397,8 @@ function syncLabels() {
   $('#w-b').hidden = !E.pair; $('#l-b').textContent = E.lb || '';
 }
 function syncExtras() {
-  $('#w-mq').hidden = state.mu !== 'url';
+  $('#w-mq').hidden = state.mu !== 'f';
+  if (state.mu === 'f' && !$('#mq-st').textContent) $('#mq-st').textContent = state.mq ? 'Fayl yuklangan. Boshqasini tanlash mumkin.' : '';
   const n = (state.ck || '').replace(/\D/g, '');
   $('#ck-err').hidden = !n || !!cardInfo(n);
 }
@@ -405,10 +407,39 @@ function changed(now) {
   $('#result').hidden = true;
   window.__changed?.(now);
 }
+async function uploadMusic(e) {
+  const file = e.target.files[0], st = $('#mq-st');
+  if (!file) return;
+  if (file.size > 5*1024*1024) { st.textContent = 'Fayl 5 MB dan katta. Qisqaroq yoki siqilgan mp3 tanlang.'; e.target.value = ''; return; }
+  st.textContent = 'Yuklanmoqda…';
+  try {
+    const r = await fetch('/api/music', {method: 'POST', headers: {'content-type': file.type || 'application/octet-stream'}, body: file});
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.id) throw new Error(j.error || 'Yuklab bo‘lmadi');
+    state.mq = j.id; $('#f-mq').value = j.id;
+    st.textContent = `“${file.name}” yuklandi.`;
+    changed(true);
+  } catch (err) { st.textContent = (err.message || 'Yuklab bo‘lmadi') + '. Qaytadan urinib ko‘ring.'; e.target.value = ''; }
+}
+let saved = {key: '', id: ''};
+async function saveShort(data) {
+  const key = JSON.stringify(data);
+  if (saved.key === key) return saved.id;
+  try {
+    const r = await fetch('/api/invite', {method: 'POST', headers: {'content-type': 'application/json'}, body: key});
+    const j = await r.json();
+    if (r.ok && /^[A-Za-z0-9]{7}$/.test(j.id || '')) { saved = {key, id: j.id}; return j.id; }
+  } catch (e) {}
+  return '';
+}
 async function generate() {
   const E = EVENTS[state.e] || EVENTS.nikoh, data = {t: state.t};
   FIELDS.forEach(k => { if (state[k] && (k !== 'b' || E.pair)) data[k] = state[k]; });
-  const code = await encode(data);
+  if (data.mu === 'f' && !data.mq) delete data.mu;
+  const btn = $('#gen'), label = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Havola tayyorlanmoqda…';
+  const code = (BASE && /^https?:$/.test(location.protocol) && await saveShort(data)) || await encode(data);
+  btn.disabled = false; btn.textContent = label;
   const base = BASE || 'https://sizning-saytingiz.uz/';
   const url = base + '#' + code;
   $('#link').textContent = url;
@@ -423,16 +454,25 @@ async function generate() {
 }
 
 /* ---------- ishga tushirish ---------- */
+async function load(h) {
+  if (/^[A-Za-z0-9]{7}$/.test(h)) {
+    const r = await fetch('/api/invite/' + h);
+    if (!r.ok) throw new Error(r.status);
+    return r.json();
+  }
+  return decode(h);
+}
 async function boot() {
   const h = location.hash.slice(1);
-  if (/^[zj][A-Za-z0-9_-]{16,}$/.test(h)) {
+  if (/^[zj][A-Za-z0-9_-]{16,}$/.test(h) || /^[A-Za-z0-9]{7}$/.test(h)) {
+    $('#app').hidden = true;
     try {
-      const d = await decode(h);
+      const d = await load(h);
       $('#app').hidden = true; $('#solo').hidden = false; document.body.classList.add('solo');
       document.title = `${(EVENTS[d.e] || EVENTS.nikoh).label} · ${namesOf(d)}`;
       mount($('#solowrap'), d, {cover: true, base: BASE});
       return;
-    } catch (e) { const el = $('#err'); el.hidden = false; el.textContent = 'Bu taklifnoma havolasi buzilgan yoki to‘liq nusxalanmagan. Havolani yuborgan odamdan uni qaytadan so‘rang.'; }
+    } catch (e) { $('#app').hidden = false; const el = $('#err'); el.hidden = false; el.textContent = 'Bu taklifnoma havolasi buzilgan yoki to‘liq nusxalanmagan. Havolani yuborgan odamdan uni qaytadan so‘rang.'; }
   }
   buildBuilder();
 }
