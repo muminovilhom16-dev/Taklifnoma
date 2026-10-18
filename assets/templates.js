@@ -86,6 +86,31 @@ const TPL = {
     name: 'Buxoro', desc: 'Pishiq g‘isht terish naqshi va firuza gumbaz ranglari',
     vars: {bg:'#EAD7BF',bg2:'#DBC1A2',panel:'rgba(250,240,226,.62)',paper:'#FBF3E7','l-ink':'#4A2817',ink:'#4A2817',soft:'#86624A',gold:'#9C5A2E',accent:'#23807C','on-gold':'#FBF3E7','on-star':'#FFFFFF',line:'rgba(156,90,46,.4)',env:'#F1E3CF',env2:'#DCC3A4',seal:'#7C3F1D',seal2:'#BE7A45',veil:'rgba(241,227,207,.8)'},
     pat: () => bukharaTile('#B06A3A','#23807C'), size: '48px', op: .32, rose: 'star', fx: 'dust', fxc: ['#C88A55','#23807C','#F4E3C8']
+  },
+  /* rasmli shablonlar: hero rasm (assets/img), matn rasmning bo'sh joyiga (box: x0,y0,x1,y1 ulushda) qo'yiladi */
+  milliy: {
+    name: 'Milliy', desc: 'Gilam yo‘lagi, anor gullari va milliy libosdagi kelin-kuyov',
+    img: 'assets/img/milliy.webp', thumb: 'assets/img/milliy-s.webp', ar: '1536/2728', box: [.23,.235,.85,.495], nf: 10.5, bism: false,
+    vars: {bg:'#FDFEF7',bg2:'#F2ECDF',panel:'rgba(255,255,255,.72)',paper:'#FFFDF6','l-ink':'#3A1F1C',ink:'#3A1F1C',soft:'#7D5A4E',gold:'#A9803A',accent:'#AE1F28','on-gold':'#FFFDF6','on-star':'#FFFFFF',line:'rgba(174,31,40,.3)',env:'#F8F3E8',env2:'#E9DFCD',seal:'#8E1C22',seal2:'#D2403A',veil:'rgba(248,243,232,.84)'},
+    pat: () => girih(96, 'rgba(174,31,40,.10)', 1), size: '96px', op: 1, rose: 'suzani', fx: 'petal', fxc: ['#AE1F28','#D2403A','#C9473F']
+  },
+  gilam: {
+    name: 'Gilam', desc: 'Qizil gilam, anor shoxi va akvarel uslubidagi kelin-kuyov',
+    img: 'assets/img/gilam.webp', thumb: 'assets/img/gilam-s.webp', ar: '768/1376', box: [.28,.335,.79,.545], nf: 9.6, bism: false,
+    vars: {bg:'#FAFBF6',bg2:'#EEEDE3',panel:'rgba(255,255,255,.72)',paper:'#FFFDF6','l-ink':'#3B1A18',ink:'#3B1A18',soft:'#6F5A4A',gold:'#B0873A',accent:'#9E1F24','on-gold':'#FFFDF6','on-star':'#FFFFFF',line:'rgba(158,31,36,.3)',env:'#F7F4EA',env2:'#E6DDCB',seal:'#861B20',seal2:'#C93A36',veil:'rgba(247,244,234,.84)'},
+    pat: () => girih(96, 'rgba(158,31,36,.09)', 1), size: '96px', op: 1, rose: 'star', fx: 'petal', fxc: ['#9E1F24','#C93A36','#5B7A3A']
+  },
+  anor: {
+    name: 'Anor bog‘i', desc: 'Oltin ravoq, anor novdalari va suzani gullari',
+    img: 'assets/img/anor.webp', thumb: 'assets/img/anor-s.webp', ar: '768/1376', box: [.215,.185,.785,.535], nf: 11.5, bism: true,
+    vars: {bg:'#FDF9E8',bg2:'#F2EAD2',panel:'rgba(255,253,244,.72)',paper:'#FFFCF0','l-ink':'#3A1D1A',ink:'#3A1D1A',soft:'#7E6046',gold:'#B08A3E',accent:'#B3262B','on-gold':'#FFFCF0','on-star':'#FFFFFF',line:'rgba(176,138,62,.45)',env:'#FAF3DE',env2:'#EADDBC',seal:'#8E1C22',seal2:'#D2493F',veil:'rgba(250,243,222,.84)'},
+    pat: () => girih(96, 'rgba(176,138,62,.16)', 1), size: '96px', op: 1, rose: 'suzani', fx: 'petal', fxc: ['#B3262B','#D2493F','#C9A04A']
+  },
+  oydin: {
+    name: 'Oydin kecha', desc: 'Lojuvard tun, hilol oy, Registon va atlas libos',
+    img: 'assets/img/oydin.webp', thumb: 'assets/img/oydin-s.webp', ar: '768/1376', box: [.08,.22,.92,.535], nf: 12.5, bism: true,
+    vars: {bg:'#131F42',bg2:'#0A1430',panel:'rgba(16,30,70,.66)',paper:'#F4EAD5','l-ink':'#13204A',ink:'#F6ECD8',soft:'#B4C6E6',gold:'#E3B94E',accent:'#E9408F','on-gold':'#0B1C42','on-star':'#FFFFFF',line:'rgba(227,185,78,.45)',env:'#1B3570',env2:'#0E2153',seal:'#9C6C18',seal2:'#E6C36C',veil:'rgba(27,53,112,.62)'},
+    pat: () => girih(96, 'rgba(227,185,78,.16)', 1), size: '96px', op: 1, rose: 'ikat', fx: 'dust', fxc: ['#E3B94E','#FFF1C7','#E9408F']
   }
 };
 const patCache = {};
