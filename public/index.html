@@ -31,7 +31,7 @@
         <div class="tpls" id="tpls"></div>
       </section>
 
-      <section class="step">
+      <section class="step adm">
         <div class="step-h"><span class="step-n">2-QADAM</span><h2>Tadbir ma’lumotlari</h2></div>
         <p class="hint">Maydonlarda namuna ma’lumotlar turibdi. O‘zingiznikiga almashtiring, o‘ngdagi ko‘rinish darhol yangilanadi.</p>
         <div class="fields">
@@ -59,7 +59,7 @@
         <p class="hint">“Mehmon ismi”ni har safar o‘zgartirib, har bir mehmonga shaxsiy havola yaratishingiz mumkin: “Hurmatli Aziz aka!” deb ochiladi.</p>
       </section>
 
-      <section class="step">
+      <section class="step adm">
         <div class="step-h"><span class="step-n">3-QADAM</span><h2>Havola</h2></div>
         <div class="btns">
           <button type="submit" class="btn primary" id="gen">Havola yaratish</button>
@@ -77,6 +77,17 @@
           </div>
           <div class="qr" id="qr" aria-label="Havola uchun QR kod"></div>
         </div>
+      </section>
+      <section class="step gate" id="gate" hidden>
+        <div class="step-h"><span class="step-n">BUYURTMA</span><h2>Taklifnomani biz tayyorlab beramiz</h2></div>
+        <p class="hint">Shablonni tanlang va o‘ngda qanday ko‘rinishini ko‘ring. Ma’lumotlaringizni yuboring, tayyor havolani sizga jo‘natamiz.</p>
+        <ul class="pk">
+          <li><b>Standart</b><span>200 000 so‘m</span><small>Naqshli shablon, kalendar, xarita, Telegramda javob</small></li>
+          <li><b>Premium</b><span>300 000 so‘m</span><small>Rasmli shablon, o‘z musiqangiz, to‘yona kartasi</small></li>
+          <li><b>Shaxsiy</b><span>450 000 so‘m</span><small>Alohida chizilgan illyustratsiya va har mehmonga ismli havola</small></li>
+        </ul>
+        <div class="btns"><a class="btn primary" id="order" href="#" target="_blank" rel="noopener">Buyurtma berish</a><button type="button" class="btn" id="demo">Namunani to‘liq ko‘rish</button></div>
+        <details class="adm-in"><summary>Admin kirish</summary><div class="btns"><input id="key" type="password" placeholder="Parol" autocomplete="current-password"><button type="button" class="btn" id="login">Kirish</button></div><p class="hint" id="key-st" aria-live="polite"></p></details>
       </section>
     </form>
 
