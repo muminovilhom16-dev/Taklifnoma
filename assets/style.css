@@ -191,3 +191,15 @@ body.solo{overflow:hidden}
   .anim .draw{stroke-dashoffset:0;transition:none}
   .seal::after,.cov-t,.scroll-hint svg{animation:none}
 }
+
+/* to'yona va musiqa */
+.card-n{font-family:var(--f-display);font-size:clamp(21px,7cqi,28px);letter-spacing:.08em;font-variant-numeric:tabular-nums;user-select:all;white-space:nowrap;color:var(--i-ink)}
+.card-m{font-family:var(--f-display);letter-spacing:.18em;text-transform:uppercase;font-size:11.5px;color:var(--i-soft);margin-top:-4px}
+.mus{position:absolute;z-index:4;top:calc(14px + env(safe-area-inset-top,0px));right:calc(14px + env(safe-area-inset-right,0px));width:44px;height:44px;border-radius:50%;border:1px solid var(--i-line);background:var(--i-panel);color:var(--i-gold);display:grid;place-items:center;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);padding:0}
+.mus svg{width:20px;height:20px}
+.mus.on .x{display:none}
+.mus.on{animation:muspulse 2.4s ease-in-out infinite}
+@keyframes muspulse{50%{box-shadow:0 0 0 6px transparent,0 0 0 1px var(--i-gold)}}
+.mus:focus-visible{outline:2px solid var(--i-gold);outline-offset:3px}
+#full .close{right:auto;left:calc(12px + env(safe-area-inset-left,0px))}
+@media (prefers-reduced-motion: reduce){.mus.on{animation:none}}

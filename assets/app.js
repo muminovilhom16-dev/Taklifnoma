@@ -106,6 +106,12 @@ function calendar(dt) {
   }
   return `<div class="cal" role="grid" aria-label="${MONTHS[dt.m-1]} oyi taqvimi">${h}</div>`;
 }
+function cardInfo(raw) {
+  const n = String(raw || '').replace(/\D/g, '');
+  if (n.length < 16 || n.length > 19) return null;
+  const brand = /^(8600|5614)/.test(n) ? 'Uzcard' : /^9860/.test(n) ? 'Humo' : /^4/.test(n) ? 'Visa' : /^(5[1-5]|2[2-7])/.test(n) ? 'Mastercard' : '';
+  return {n, brand, pretty: n.replace(/(\d{4})(?=\d)/g, '$1 ')};
+}
 function namesOf(d) {
   const E = EVENTS[d.e] || EVENTS.nikoh;
   return E.pair ? `${d.a || ''} & ${d.b || ''}` : (E.hero || d.a || '');
@@ -125,6 +131,7 @@ function inviteHTML(d, base) {
     const f = x => `${x.getFullYear()}${pad(x.getMonth()+1)}${pad(x.getDate())}T${pad(x.getHours())}${pad(x.getMinutes())}00`;
     gcal = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(E.label + ': ' + namesOf(d))}&dates=${f(st)}/${f(en)}&location=${q}`;
   }
+  const card = cardInfo(d.ck);
   const tel = (d.p || '').replace(/[^\d+]/g, '');
   const tgUser = (d.tg || '').replace(/^(https?:\/\/)?(t\.me\/)?@?/i, '');
   const tg = /^[A-Za-z0-9_]{4,32}$/.test(tgUser) ? `https://t.me/${tgUser}?text=${encodeURIComponent(`Assalomu alaykum! ${E.label} taklifnomasini oldim${d.g ? ` (${d.g})` : ''}. Albatta boraman.`)}` : '';
@@ -180,6 +187,16 @@ function inviteHTML(d, base) {
         ${tel ? `<a class="ibtn${tg ? '' : ' fill'}" href="tel:${esc(tel)}">Qo‘ng‘iroq qilish</a>` : ''}
         ${gcal ? `<a class="ibtn" href="${gcal}" target="_blank" rel="noopener">Kalendarga qo‘shish</a>` : ''}
       </div>
+    </div>
+  </section>` : ''}
+  ${card ? `<section class="sec">
+    <div class="panel rv">
+      <div class="eyebrow">To‘yona</div>
+      <div class="month" style="font-size:clamp(34px,10cqi,44px)">Tabriklaringiz uchun</div>
+      <p class="note">Tashrif buyurishning imkoni bo‘lmasa yoki to‘yona yo‘llamoqchi bo‘lsangiz, quyidagi kartaga o‘tkazishingiz mumkin.</p>
+      <div class="card-n">${card.pretty}</div>
+      ${(card.brand || d.cn) ? `<div class="card-m">${[card.brand, esc(d.cn || '')].filter(Boolean).join(' · ')}</div>` : ''}
+      <button type="button" class="ibtn fill copy-card" data-card="${card.n}">Raqamni nusxalash</button>
     </div>
   </section>` : ''}
   <section class="sec end">
@@ -250,7 +267,18 @@ function mount(wrap, d, opts = {}) {
   wrap._cleanup?.();
   const key = TPL[d.t] ? d.t : 'ganch', T = TPL[key];
   applyVars(wrap, T, key);
-  wrap.innerHTML = `<div class="bgp"></div><div class="vig"></div><div class="stage">${inviteHTML(d, opts.base)}</div><canvas class="fx"></canvas>${opts.cover ? coverHTML(d) : ''}`;
+  const music = window.TAKLIFNOMA_MUSIC?.create(d.mu, d.mq);
+  const musBtn = music ? `<button type="button" class="mus" aria-label="Musiqa" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/><path class="x" d="M3 3l18 18"/></svg></button>` : '';
+  wrap.innerHTML = `<div class="bgp"></div><div class="vig"></div><div class="stage">${inviteHTML(d, opts.base)}</div><canvas class="fx"></canvas>${musBtn}${opts.cover ? coverHTML(d) : ''}`;
+  const mb = wrap.querySelector('.mus');
+  const setMus = on => { if (!mb) return; on ? music.start() : music.pause(); mb.classList.toggle('on', on); mb.setAttribute('aria-pressed', String(on)); mb.setAttribute('aria-label', on ? 'Musiqani to‘xtatish' : 'Musiqani yoqish'); };
+  mb?.addEventListener('click', () => setMus(!music.playing));
+  wrap.querySelector('.copy-card')?.addEventListener('click', e => {
+    const btn = e.currentTarget, num = btn.dataset.card;
+    const ok = () => { btn.textContent = 'Nusxalandi'; setTimeout(() => btn.textContent = 'Raqamni nusxalash', 1800); };
+    const sel = () => { const r = document.createRange(); r.selectNodeContents(wrap.querySelector('.card-n')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+    try { navigator.clipboard.writeText(num).then(ok, sel); } catch (err) { sel(); }
+  });
   const stage = wrap.querySelector('.stage'), bgp = wrap.querySelector('.bgp'), hint = wrap.querySelector('.scroll-hint');
   const stopFX = startFX(wrap.querySelector('.fx'), T);
   const canAnim = 'IntersectionObserver' in window && !reduce;
@@ -284,6 +312,7 @@ function mount(wrap, d, opts = {}) {
     const env = cover.querySelector('.env'), seal = cover.querySelector('.seal');
     seal.addEventListener('click', () => {
       cover.classList.add('opening'); env.classList.add('open');
+      if (music) setMus(true);
       const r = seal.getBoundingClientRect(), w = wrap.getBoundingClientRect();
       wrap.querySelector('.fx')._burst?.(r.left - w.left + r.width/2, r.top - w.top + r.height/2);
       const step = reduce ? 0 : 1;
@@ -293,7 +322,7 @@ function mount(wrap, d, opts = {}) {
       setTimeout(() => cover.remove(), 3300*step);
     }, {once: true});
   } else observe();
-  wrap._cleanup = () => { io?.disconnect(); clearInterval(timer); stopFX(); };
+  wrap._cleanup = () => { io?.disconnect(); clearInterval(timer); stopFX(); music?.stop(); };
   return stage;
 }
 
@@ -316,8 +345,8 @@ let BASE = '';
 try { if (window.top === window.self && /^(https?|file):$/.test(location.protocol)) BASE = location.href.split('#')[0]; } catch (e) {}
 
 /* ---------- konstruktor ---------- */
-const FIELDS = ['e','g','a','b','d','h','v','ad','m','p','tg','f','x'];
-const SAMPLE = {t:'samarqand', e:'nikoh', a:'Jasur', b:'Madina', g:'', d:'2026-11-21', h:'18:00', v:'“Oqsaroy” to‘yxonasi', ad:'Toshkent sh., Yunusobod tumani, Amir Temur ko‘chasi, 108', m:'', p:'+998 90 123 45 67', tg:'', f:'Karimovlar va Rahimovlar oilalari', x:''};
+const FIELDS = ['e','g','a','b','d','h','v','ad','m','p','tg','ck','cn','mu','mq','f','x'];
+const SAMPLE = {t:'samarqand', e:'nikoh', a:'Jasur', b:'Madina', g:'', d:'2026-11-21', h:'18:00', v:'“Oqsaroy” to‘yxonasi', ad:'Toshkent sh., Yunusobod tumani, Amir Temur ko‘chasi, 108', m:'', p:'+998 90 123 45 67', tg:'', ck:'', cn:'', mu:'dutor', mq:'', f:'Karimovlar va Rahimovlar oilalari', x:''};
 let state = {...SAMPLE};
 try { const s = JSON.parse(localStorage.getItem('taklifnoma-draft') || 'null'); if (s && typeof s === 'object') state = {...SAMPLE, ...s}; } catch (e) {}
 
@@ -326,8 +355,8 @@ function buildBuilder() {
   $('#tpls').innerHTML = Object.entries(TPL).map(([k, T]) => `<button type="button" class="tpl" data-k="${k}" aria-pressed="false"><div class="sw" data-sw="${k}"><div class="bgp"></div><div class="se"></div><div class="ss"></div></div><b>${T.name}</b><small>${T.desc}</small></button>`).join('');
   document.querySelectorAll('[data-sw]').forEach(el => applyVars(el, TPL[el.dataset.sw], el.dataset.sw));
   document.querySelectorAll('.tpl').forEach(b => b.addEventListener('click', () => { state.t = b.dataset.k; syncTpl(); changed(true); }));
-  FIELDS.forEach(k => { const el = $('#f-' + k); el.value = state[k] || ''; el.addEventListener('input', () => { state[k] = el.value.trim(); if (k === 'e') syncLabels(); changed(); }); });
-  syncTpl(); syncLabels();
+  FIELDS.forEach(k => { const el = $('#f-' + k); el.value = state[k] || ''; el.addEventListener('input', () => { state[k] = el.value.trim(); if (k === 'e') syncLabels(); if (k === 'mu' || k === 'ck') syncExtras(); changed(); }); });
+  syncTpl(); syncLabels(); syncExtras();
   let opened = false;
   const pv = $('#pv');
   const render = (cover) => mount(pv, state, {cover, base: BASE, scroll: cover ? 0 : pv.querySelector('.stage')?.scrollTop, onOpen: () => opened = true});
@@ -350,6 +379,11 @@ function syncLabels() {
   const E = EVENTS[state.e] || EVENTS.nikoh;
   $('#l-a').textContent = E.la; $('#f-a').placeholder = E.ph || '';
   $('#w-b').hidden = !E.pair; $('#l-b').textContent = E.lb || '';
+}
+function syncExtras() {
+  $('#w-mq').hidden = state.mu !== 'url';
+  const n = (state.ck || '').replace(/\D/g, '');
+  $('#ck-err').hidden = !n || !!cardInfo(n);
 }
 function changed(now) {
   try { localStorage.setItem('taklifnoma-draft', JSON.stringify(state)); } catch (e) {}
