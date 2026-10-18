@@ -203,3 +203,18 @@ body.solo{overflow:hidden}
 .mus:focus-visible{outline:2px solid var(--i-gold);outline-offset:3px}
 #full .close{right:auto;left:calc(12px + env(safe-area-inset-left,0px))}
 @media (prefers-reduced-motion: reduce){.mus.on{animation:none}}
+
+/* rasmli shablonlar: hero rasm, matn rasmning bo'sh joyida */
+.ihero-sec{min-height:100%;padding:0 0 22px;align-content:start;gap:14px}
+.ihero{position:relative;width:min(100%,480px);container-type:inline-size;overflow:hidden}
+.ihero img{position:absolute;inset:0;width:100%;height:100%;display:block}
+.anim .ihero.rv{filter:none;transform:none}
+.anim .ihero img{transform:scale(1.06);transition:transform 2.6s cubic-bezier(.2,.7,.2,1)}
+.anim .ihero.in img{transform:none}
+.ibox{position:absolute;display:grid;align-content:center;justify-items:center;gap:1.6cqi;text-align:center}
+.ibox .bism{font-size:clamp(12px,4.2cqi,20px);line-height:1.4}
+.ibox .eyebrow{font-size:clamp(9px,2.9cqi,13px);letter-spacing:.24em}
+.ibox .names{font-size:calc(var(--nf)*1cqi);margin:0}
+.ibox .dateline{font-size:clamp(10px,3.4cqi,15px);letter-spacing:.26em}
+.sw img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 72%}
+@media (prefers-reduced-motion: reduce){.anim .ihero img{transform:none;transition:none}}

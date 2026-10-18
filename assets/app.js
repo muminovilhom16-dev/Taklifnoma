@@ -135,19 +135,34 @@ function inviteHTML(d, base) {
   const tel = (d.p || '').replace(/[^\d+]/g, '');
   const tgUser = (d.tg || '').replace(/^(https?:\/\/)?(t\.me\/)?@?/i, '');
   const tg = /^[A-Za-z0-9_]{4,32}$/.test(tgUser) ? `https://t.me/${tgUser}?text=${encodeURIComponent(`Assalomu alaykum! ${E.label} taklifnomasini oldim${d.g ? ` (${d.g})` : ''}. Albatta boraman.`)}` : '';
-  return `
+  const bism = `<div class="bism" lang="ar" dir="rtl">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيمِ</div>`;
+  const heroText = `<div class="eyebrow">${E.hero ? 'Taklifnoma' : E.label}</div>
+        <h1 class="names">${names}</h1>
+        ${E.hero && d.a ? `<div class="eyebrow">${a}</div>` : ''}
+        ${dt ? `<div class="dateline">${pad(dt.d)} · ${pad(dt.m)} · ${dt.y}</div>` : ''}`;
+  const hint = `<div class="scroll-hint rv"><span>Pastga suring</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></div>`;
+  const [x0, y0, x1, y1] = T.box || [];
+  const hero = T.img ? `
+  <section class="sec ihero-sec">
+    <div class="ihero rv" style="aspect-ratio:${T.ar}">
+      <img src="${T.img}" alt="" decoding="async">
+      <div class="ibox" style="left:${x0*100}%;top:${y0*100}%;width:${(x1-x0)*100}%;height:${(y1-y0)*100}%;--nf:${T.nf}">
+        ${T.bism ? bism : ''}
+        ${heroText}
+      </div>
+    </div>
+    ${hint}
+  </section>` : `
   <section class="sec hero">
     <div class="arch rv">${archSVG()}
       <div class="arch-in">
-        <div class="bism" lang="ar" dir="rtl">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيمِ</div>
-        <div class="eyebrow">${E.hero ? 'Taklifnoma' : E.label}</div>
-        <h1 class="names">${names}</h1>
-        ${E.hero && d.a ? `<div class="eyebrow">${a}</div>` : ''}
-        ${dt ? `<div class="dateline">${pad(dt.d)} · ${pad(dt.m)} · ${dt.y}</div>` : ''}
+        ${bism}
+        ${heroText}
       </div>
     </div>
-    <div class="scroll-hint rv"><span>Pastga suring</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></div>
-  </section>
+    ${hint}
+  </section>`;
+  return `${hero}
   <section class="sec">
     ${divider()}
     <div class="eyebrow rv">Assalomu alaykum</div>
@@ -352,7 +367,7 @@ try { const s = JSON.parse(localStorage.getItem('taklifnoma-draft') || 'null'); 
 
 function buildBuilder() {
   $('#f-e').innerHTML = Object.entries(EVENTS).map(([k, E]) => `<option value="${k}">${E.label}</option>`).join('');
-  $('#tpls').innerHTML = Object.entries(TPL).map(([k, T]) => `<button type="button" class="tpl" data-k="${k}" aria-pressed="false"><div class="sw" data-sw="${k}"><div class="bgp"></div><div class="se"></div><div class="ss"></div></div><b>${T.name}</b><small>${T.desc}</small></button>`).join('');
+  $('#tpls').innerHTML = Object.entries(TPL).map(([k, T]) => `<button type="button" class="tpl" data-k="${k}" aria-pressed="false"><div class="sw" data-sw="${k}">${T.thumb ? `<img src="${T.thumb}" alt="" loading="lazy">` : '<div class="bgp"></div><div class="se"></div><div class="ss"></div>'}</div><b>${T.name}</b><small>${T.desc}</small></button>`).join('');
   document.querySelectorAll('[data-sw]').forEach(el => applyVars(el, TPL[el.dataset.sw], el.dataset.sw));
   document.querySelectorAll('.tpl').forEach(b => b.addEventListener('click', () => { state.t = b.dataset.k; syncTpl(); changed(true); }));
   FIELDS.forEach(k => { const el = $('#f-' + k); el.value = state[k] || ''; el.addEventListener('input', () => { state[k] = el.value.trim(); if (k === 'e') syncLabels(); if (k === 'mu' || k === 'ck') syncExtras(); changed(); }); });
