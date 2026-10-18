@@ -361,7 +361,7 @@ try { if (window.top === window.self && /^(https?|file):$/.test(location.protoco
 
 /* ---------- konstruktor ---------- */
 // Buyurtma tugmasi qayerga olib boradi (Telegram yoki Instagram havolasi)
-const CONTACT = '';
+const CONTACT = 'https://t.me/m0minov?text=' + encodeURIComponent('Assalomu alaykum! Online taklifnoma buyurtma qilmoqchiman.');
 const KEY_LS = 'taklif-key';
 const getKey = () => { try { return localStorage.getItem(KEY_LS) || ''; } catch (e) { return ''; } };
 async function checkKey(key) {
