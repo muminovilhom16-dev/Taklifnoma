@@ -116,11 +116,9 @@ function namesOf(d) {
   const E = EVENTS[d.e] || EVENTS.nikoh;
   return E.pair ? `${d.a || ''} & ${d.b || ''}` : (E.hero || d.a || '');
 }
-function inviteHTML(d, base) {
+function inviteParts(d, base) {
   const E = EVENTS[d.e] || EVENTS.nikoh, T = TPL[d.t] || TPL.ganch;
-  const a = esc(d.a || 'Ism'), b = esc(d.b || 'Ism');
   const dt = parseDate(d.d), time = /^\d{2}:\d{2}$/.test(d.h || '') ? d.h : '';
-  const names = E.pair ? `<span class="nm">${a}</span><span class="amp">&amp;</span><span class="nm">${b}</span>` : `<span class="nm">${E.hero || a}</span>`;
   const q = encodeURIComponent([d.v, d.ad].filter(Boolean).join(', '));
   const mapBtns = /^https?:\/\//i.test(d.m || '')
     ? `<a class="ibtn fill" href="${esc(d.m)}" target="_blank" rel="noopener">Xaritada ochish</a>`
@@ -135,6 +133,43 @@ function inviteHTML(d, base) {
   const tel = (d.p || '').replace(/[^\d+]/g, '');
   const tgUser = (d.tg || '').replace(/^(https?:\/\/)?(t\.me\/)?@?/i, '');
   const tg = /^[A-Za-z0-9_]{4,32}$/.test(tgUser) ? `https://t.me/${tgUser}?text=${encodeURIComponent(`Assalomu alaykum! ${E.label} taklifnomasini oldim${d.g ? ` (${d.g})` : ''}. Albatta boraman.`)}` : '';
+  const cdT = dt ? new Date(dt.y, dt.m-1, dt.d, time ? +time.slice(0,2) : 0, time ? +time.slice(3) : 0).getTime() : 0;
+  const rsvp = (d.p || tg || gcal) ? `<section class="sec">
+    <div class="panel rv">
+      <div class="eyebrow">Javobingizni kutamiz</div>
+      <div class="month" style="font-size:clamp(34px,10cqi,44px)">Tashrifingizni tasdiqlang</div>
+      ${d.p ? `<p class="phone-n">${esc(d.p)}</p>` : ''}
+      <div class="ibtns">
+        ${tg ? `<a class="ibtn fill" href="${esc(tg)}" target="_blank" rel="noopener">Telegramda javob berish</a>` : ''}
+        ${tel ? `<a class="ibtn${tg ? '' : ' fill'}" href="tel:${esc(tel)}">Qo‘ng‘iroq qilish</a>` : ''}
+        ${gcal ? `<a class="ibtn" href="${gcal}" target="_blank" rel="noopener">Kalendarga qo‘shish</a>` : ''}
+      </div>
+    </div>
+  </section>` : '';
+  const gift = card ? `<section class="sec">
+    <div class="panel rv">
+      <div class="eyebrow">To‘yona</div>
+      <div class="month" style="font-size:clamp(34px,10cqi,44px)">Tabriklaringiz uchun</div>
+      <p class="note">Tashrif buyurishning imkoni bo‘lmasa yoki to‘yona yo‘llamoqchi bo‘lsangiz, quyidagi kartaga o‘tkazishingiz mumkin.</p>
+      <div class="card-n">${card.pretty}</div>
+      ${(card.brand || d.cn) ? `<div class="card-m">${[card.brand, esc(d.cn || '')].filter(Boolean).join(' · ')}</div>` : ''}
+      <button type="button" class="ibtn fill copy-card" data-card="${card.n}">Raqamni nusxalash</button>
+    </div>
+  </section>` : '';
+  const end = `<section class="sec end">
+    <div class="rv">${rosette(T.rose)}</div>
+    <div class="eyebrow rv">Hurmat bilan</div>
+    ${d.f ? `<div class="family rv">${esc(d.f)}</div>` : ''}
+    <p class="thanks rv">Sizni intizorlik bilan kutib qolamiz</p>
+    ${base ? `<a class="made" href="${esc(base)}" target="_blank" rel="noopener">Taklifnoma orqali yaratildi</a>` : ''}
+  </section>`;
+  return {E, T, dt, time, mapBtns, cdT, rsvp, gift, end};
+}
+function inviteHTML(d, base) {
+  const P = inviteParts(d, base), {E, T, dt, time} = P;
+  if (T.lux && window.TAKLIFNOMA_LUX) return window.TAKLIFNOMA_LUX.inviteHTML(d, P, {esc, pad, MONTHS, WD});
+  const a = esc(d.a || 'Ism'), b = esc(d.b || 'Ism');
+  const names = E.pair ? `<span class="nm">${a}</span><span class="amp">&amp;</span><span class="nm">${b}</span>` : `<span class="nm">${E.hero || a}</span>`;
   const bism = `<div class="bism" lang="ar" dir="rtl">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيمِ</div>`;
   const heroText = `<div class="eyebrow">${E.hero ? 'Taklifnoma' : E.label}</div>
         <h1 class="names">${names}</h1>
@@ -181,7 +216,7 @@ function inviteHTML(d, base) {
   </section>
   <section class="sec">
     <div class="eyebrow rv">${E.until}</div>
-    <div class="cd rv" data-t="${new Date(dt.y, dt.m-1, dt.d, time ? +time.slice(0,2) : 0, time ? +time.slice(3) : 0).getTime()}">
+    <div class="cd rv" data-t="${P.cdT}">
       <div><b data-u="d">0</b><small>Kun</small></div><div><b data-u="h">0</b><small>Soat</small></div><div><b data-u="m">0</b><small>Daqiqa</small></div><div><b data-u="s">0</b><small>Soniya</small></div>
     </div>
   </section>` : ''}
@@ -190,37 +225,11 @@ function inviteHTML(d, base) {
     <div class="eyebrow rv">Manzil</div>
     ${d.v ? `<p class="venue rv">${esc(d.v)}</p>` : ''}
     ${d.ad ? `<p class="addr rv">${esc(d.ad)}</p>` : ''}
-    ${(d.v || d.ad || d.m) ? `<div class="ibtns rv">${mapBtns}</div>` : ''}
+    ${(d.v || d.ad || d.m) ? `<div class="ibtns rv">${P.mapBtns}</div>` : ''}
   </section>
-  ${(d.p || tg || gcal) ? `<section class="sec">
-    <div class="panel rv">
-      <div class="eyebrow">Javobingizni kutamiz</div>
-      <div class="month" style="font-size:clamp(34px,10cqi,44px)">Tashrifingizni tasdiqlang</div>
-      ${d.p ? `<p class="phone-n">${esc(d.p)}</p>` : ''}
-      <div class="ibtns">
-        ${tg ? `<a class="ibtn fill" href="${esc(tg)}" target="_blank" rel="noopener">Telegramda javob berish</a>` : ''}
-        ${tel ? `<a class="ibtn${tg ? '' : ' fill'}" href="tel:${esc(tel)}">Qo‘ng‘iroq qilish</a>` : ''}
-        ${gcal ? `<a class="ibtn" href="${gcal}" target="_blank" rel="noopener">Kalendarga qo‘shish</a>` : ''}
-      </div>
-    </div>
-  </section>` : ''}
-  ${card ? `<section class="sec">
-    <div class="panel rv">
-      <div class="eyebrow">To‘yona</div>
-      <div class="month" style="font-size:clamp(34px,10cqi,44px)">Tabriklaringiz uchun</div>
-      <p class="note">Tashrif buyurishning imkoni bo‘lmasa yoki to‘yona yo‘llamoqchi bo‘lsangiz, quyidagi kartaga o‘tkazishingiz mumkin.</p>
-      <div class="card-n">${card.pretty}</div>
-      ${(card.brand || d.cn) ? `<div class="card-m">${[card.brand, esc(d.cn || '')].filter(Boolean).join(' · ')}</div>` : ''}
-      <button type="button" class="ibtn fill copy-card" data-card="${card.n}">Raqamni nusxalash</button>
-    </div>
-  </section>` : ''}
-  <section class="sec end">
-    <div class="rv">${rosette(T.rose)}</div>
-    <div class="eyebrow rv">Hurmat bilan</div>
-    ${d.f ? `<div class="family rv">${esc(d.f)}</div>` : ''}
-    <p class="thanks rv">Sizni intizorlik bilan kutib qolamiz</p>
-    ${base ? `<a class="made" href="${esc(base)}" target="_blank" rel="noopener">Taklifnoma orqali yaratildi</a>` : ''}
-  </section>`;
+  ${P.rsvp}
+  ${P.gift}
+  ${P.end}`;
 }
 function coverHTML(d) {
   const E = EVENTS[d.e] || EVENTS.nikoh;
@@ -273,7 +282,7 @@ function startFX(canvas, T) {
     raf = requestAnimationFrame(tick);
   };
   tick();
-  canvas._burst = (x, y) => { for (let i = 0; i < 70; i++) ps.push(mk(x, y, true)); };
+  canvas._burst = (x, y, n = 70) => { for (let i = 0; i < n; i++) ps.push(mk(x, y, true)); };
   return () => { cancelAnimationFrame(raf); ro.disconnect(); };
 }
 
@@ -282,9 +291,16 @@ function mount(wrap, d, opts = {}) {
   wrap._cleanup?.();
   const key = TPL[d.t] ? d.t : 'ganch', T = TPL[key];
   applyVars(wrap, T, key);
+  const L = T.lux && window.TAKLIFNOMA_LUX;
+  wrap.classList.toggle('lx', !!L);
+  wrap.classList.remove('lx-pre');
   const music = window.TAKLIFNOMA_MUSIC?.create(d.mu, d.mq);
-  const musBtn = music ? `<button type="button" class="mus" aria-label="Musiqa" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/><path class="x" d="M3 3l18 18"/></svg></button>` : '';
-  wrap.innerHTML = `<div class="bgp"></div><div class="vig"></div><div class="stage">${inviteHTML(d, opts.base)}</div><canvas class="fx"></canvas>${musBtn}${opts.cover ? coverHTML(d) : ''}`;
+  const musIcon = L
+    ? '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path class="pl" d="M8 5.5v13l11-6.5z"/><path class="pa" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>'
+    : '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/><path class="x" d="M3 3l18 18"/></svg>';
+  const musBtn = music ? `<button type="button" class="mus" aria-label="Musiqa" aria-pressed="false">${musIcon}</button>` : '';
+  const cover = opts.cover ? (L ? L.coverHTML(d, EVENTS[d.e] || EVENTS.nikoh, esc) : coverHTML(d)) : '';
+  wrap.innerHTML = `<div class="bgp"></div><div class="vig"></div><div class="stage">${inviteHTML(d, opts.base)}</div><canvas class="fx"></canvas>${musBtn}${cover}`;
   const mb = wrap.querySelector('.mus');
   const setMus = on => { if (!mb) return; on ? music.start() : music.pause(); mb.classList.toggle('on', on); mb.setAttribute('aria-pressed', String(on)); mb.setAttribute('aria-label', on ? 'Musiqani to‘xtatish' : 'Musiqani yoqish'); };
   mb?.addEventListener('click', () => setMus(!music.playing));
@@ -294,8 +310,9 @@ function mount(wrap, d, opts = {}) {
     const sel = () => { const r = document.createRange(); r.selectNodeContents(wrap.querySelector('.card-n')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
     try { navigator.clipboard.writeText(num).then(ok, sel); } catch (err) { sel(); }
   });
-  const stage = wrap.querySelector('.stage'), bgp = wrap.querySelector('.bgp'), hint = wrap.querySelector('.scroll-hint');
-  const stopFX = startFX(wrap.querySelector('.fx'), T);
+  const stage = wrap.querySelector('.stage'), bgp = wrap.querySelector('.bgp'), hint = wrap.querySelector('.scroll-hint, .lx-down');
+  const fx = wrap.querySelector('.fx'), stopFX = startFX(fx, T);
+  const burst = (x, y, n) => fx._burst?.(x, y, n);
   const canAnim = 'IntersectionObserver' in window && !reduce;
   if (canAnim && !opts.instant) stage.classList.add('anim');
   let io;
@@ -318,12 +335,18 @@ function mount(wrap, d, opts = {}) {
       let s = Math.max(0, Math.floor((t - Date.now())/1000));
       if (s === 0) { cd.outerHTML = '<p class="cd-done">Tantana kuni keldi. Tashrifingizdan xursandmiz!</p>'; clearInterval(timer); return; }
       const v = {d: Math.floor(s/86400), h: Math.floor(s%86400/3600), m: Math.floor(s%3600/60), s: s%60};
-      cd.querySelectorAll('b').forEach(b => b.textContent = b.dataset.u === 'd' ? v.d : pad(v[b.dataset.u]));
+      cd.querySelectorAll('b').forEach(b => {
+        const nv = String(b.dataset.u === 'd' ? v.d : pad(v[b.dataset.u]));
+        if (b.textContent !== nv) { b.textContent = nv; b.classList.remove('tk'); void b.offsetWidth; b.classList.add('tk'); }
+      });
     };
     upd(); timer = setInterval(upd, 1000);
   }
-  const cover = wrap.querySelector('.cover');
-  if (cover) {
+  const coverEl = wrap.querySelector('.cover');
+  if (coverEl && L) {
+    L.openCover(wrap, coverEl, {start: (x, y) => { if (music) setMus(true); burst(x, y, 90); }, done: () => { observe(); opts.onOpen?.(); }}, reduce);
+  } else if (coverEl) {
+    const cover = coverEl;
     const env = cover.querySelector('.env'), seal = cover.querySelector('.seal');
     seal.addEventListener('click', () => {
       cover.classList.add('opening'); env.classList.add('open');
@@ -337,6 +360,7 @@ function mount(wrap, d, opts = {}) {
       setTimeout(() => cover.remove(), 3300*step);
     }, {once: true});
   } else observe();
+  if (L) L.init(wrap, stage, reduce, burst);
   wrap._cleanup = () => { io?.disconnect(); clearInterval(timer); stopFX(); music?.stop(); };
   return stage;
 }
@@ -373,8 +397,8 @@ function setAdmin(on) {
   $('#gate').hidden = on;
   $('#openfull').hidden = !on;
 }
-const FIELDS = ['e','g','a','b','d','h','v','ad','m','p','tg','ck','cn','mu','mq','f','x'];
-const SAMPLE = {t:'samarqand', e:'nikoh', a:'Jasur', b:'Madina', g:'', d:'2026-11-21', h:'18:00', v:'“Oqsaroy” to‘yxonasi', ad:'Toshkent sh., Yunusobod tumani, Amir Temur ko‘chasi, 108', m:'', p:'+998 90 123 45 67', tg:'', ck:'', cn:'', mu:'dutor', mq:'', f:'Karimovlar va Rahimovlar oilalari', x:''};
+const FIELDS = ['e','g','a','b','pa','pb','d','h','v','ad','m','p','tg','ck','cn','mu','mq','f','x','pr'];
+const SAMPLE = {t:'samarqand', e:'nikoh', a:'Jasur', b:'Madina', g:'', d:'2026-11-21', h:'18:00', v:'“Oqsaroy” to‘yxonasi', ad:'Toshkent sh., Yunusobod tumani, Amir Temur ko‘chasi, 108', m:'', p:'+998 90 123 45 67', tg:'', ck:'', cn:'', mu:'dutor', mq:'', f:'Karimovlar va Rahimovlar oilalari', x:'', pa:'', pb:'', pr:''};
 let state = {...SAMPLE};
 try { const s = JSON.parse(localStorage.getItem('taklifnoma-draft') || 'null'); if (s && typeof s === 'object') state = {...SAMPLE, ...s}; } catch (e) {}
 
@@ -418,6 +442,8 @@ function syncLabels() {
   const E = EVENTS[state.e] || EVENTS.nikoh;
   $('#l-a').textContent = E.la; $('#f-a').placeholder = E.ph || '';
   $('#w-b').hidden = !E.pair; $('#l-b').textContent = E.lb || '';
+  $('#w-pb').hidden = !E.pair; $('#w-pa').hidden = !!E.hero;
+  $('#l-pa').textContent = E.pair ? 'Kuyovning ota-onasi (ixtiyoriy)' : 'Ota-onasi (ixtiyoriy)';
 }
 function syncExtras() {
   $('#w-mq').hidden = state.mu !== 'f';
@@ -457,7 +483,7 @@ async function saveShort(data) {
 }
 async function generate() {
   const E = EVENTS[state.e] || EVENTS.nikoh, data = {t: state.t};
-  FIELDS.forEach(k => { if (state[k] && (k !== 'b' || E.pair)) data[k] = state[k]; });
+  FIELDS.forEach(k => { if (state[k] && ((k !== 'b' && k !== 'pb') || E.pair)) data[k] = state[k]; });
   if (data.mu === 'f' && !data.mq) delete data.mu;
   const btn = $('#gen'), label = btn.textContent;
   btn.disabled = true; btn.textContent = 'Havola tayyorlanmoqda…';

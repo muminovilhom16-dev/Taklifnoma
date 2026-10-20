@@ -30,3 +30,11 @@ Muhim: kalit nomini keyin o‘zgartirmang. Yaratilgan havolalar shablonni shu ka
 1. Rasmni `public/assets/img/<kalit>.webp` (eni 768–900px) va kichik nusxasini `public/assets/img/<kalit>-s.webp` (eni 240px) qilib saqlang.
 2. TPL ga `img`, `thumb`, `ar` (rasm eni/bo‘yi, masalan `'768/1376'`), `box` (matn joyi: `[x0, y0, x1, y1]`, 0–1 ulushda), `nf` (ism shrift o‘lchami, rasm enining % ida) va `bism` (bismilloh ko‘rsatilsinmi) qo‘shing.
 3. `vars.bg` ni rasm qog‘ozi rangiga moslang, shunda rasm pastki qismi sahifaga qo‘shilib ketadi.
+
+## To‘liq sahnali shablon (`lux: true`, masalan `oqmuhr`)
+
+Bunday shablonni `public/assets/lux.js` chizadi: bo‘rtma oq konvert va mum muhr, ochilganda nur bilan ajraladigan qopqoqlar, rasmli hero, tirnab ochiladigan sana, bo‘rtma ravoqli taklif kartasi, oyat, to‘y dasturi (vaqt chizig‘i), qolgan vaqt va manzil rasmi.
+
+TPL maydonlari: `img` va `ar` (hero rasm), `box` (rasmdagi matn joyi), `lamps` (fonar nuri: `[[chapdan %, tepadan %], ...]`, o‘ng tomoni avtomatik aks ettiriladi), `venue` (manzil bo‘limidagi rasm, ixtiyoriy).
+
+Konstruktordagi “Kuyovning ota-onasi” (`pa`), “Kelinning ota-onasi” (`pb`) va “To‘y dasturi” (`pr`, har qatorda `18:00 Nomi`) maydonlari faqat shu shablonlarda ko‘rinadi. Dastur qatoridagi so‘zga qarab rasm tanlanadi (kutib olish: darvoza, kelin-kuyov: uzuklar, nikoh/duo: mehrob, ziyofat: choynak, bazm: doira, tort: tort, mushak: salyut).

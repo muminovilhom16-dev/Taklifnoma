@@ -228,3 +228,177 @@ body.solo{overflow:hidden}
 .adm-in summary{cursor:pointer;color:var(--muted);font-size:13px}
 .adm-in .btns{margin-top:10px}
 .adm-in input{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0;flex:1 1 160px}
+
+/* ========== "Oq muhr" (lux.js): bo'rtma konvert, tirnab ochiladigan sana, to'y dasturi ========== */
+.lx .bgp,.lx .vig{display:none}
+.lx .stage{transition:transform 1.9s cubic-bezier(.2,.7,.2,1),filter 1.5s ease}
+.lx.lx-pre .stage{transform:scale(1.1);filter:blur(12px)}
+
+/* konvert: 4 ta qopqoq bitta bo'rtma rasmni bo'lib oladi */
+.lx-cover{display:block;background:var(--i-env);overflow:hidden}
+.lx-f{position:absolute;inset:0;background:var(--env) center/cover no-repeat;transition:transform 1.6s cubic-bezier(.6,0,.2,1)}
+.lx-f::after{content:"";position:absolute;inset:0}
+.lx-t{clip-path:polygon(-1% -1%,101% -1%,50% 46%)}
+.lx-l{clip-path:polygon(0 0,50% 46%,0 100%)}
+.lx-r{clip-path:polygon(100% 0,100% 100%,50% 46%)}
+.lx-b{clip-path:polygon(0 100%,50% 46%,100% 100%)}
+.lx-t::after{background:linear-gradient(to bottom,rgba(255,255,255,.35),rgba(255,255,255,0) 75%)}
+.lx-l::after{background:linear-gradient(to right,rgba(120,98,66,.07),rgba(120,98,66,0) 70%)}
+.lx-r::after{background:linear-gradient(to left,rgba(120,98,66,.07),rgba(120,98,66,0) 70%)}
+.lx-b::after{background:linear-gradient(to top,rgba(255,255,255,.2),rgba(120,98,66,.04))}
+.lx-fw{position:absolute;inset:0;pointer-events:none;transition:transform 1.6s cubic-bezier(.6,0,.2,1)}
+.lx-fw.t{z-index:2;filter:drop-shadow(0 1.5px 1.5px rgba(110,88,56,.22)) drop-shadow(0 7px 12px rgba(110,88,56,.10))}
+.lx-fw.b{z-index:1;filter:drop-shadow(0 -1px 1.5px rgba(110,88,56,.16))}
+.lx-cover.part .lx-fw.t{transform:translateY(-58%) scale(1.04)}
+.lx-cover.part .lx-fw.b{transform:translateY(56%) scale(1.04)}
+.lx-cover.part .lx-l{transform:translateX(-52%)}
+.lx-cover.part .lx-r{transform:translateX(52%)}
+.lx-seal{left:50%;top:46%;width:min(31cqi,150px);height:auto;aspect-ratio:1;z-index:6}
+.lx-seal svg{filter:drop-shadow(0 3px 3px rgba(90,70,40,.22)) drop-shadow(0 12px 18px rgba(90,70,40,.18))}
+.lx-seal::after{inset:-8px;border-color:rgba(176,141,87,.7)}
+.lx-cover.opening .lx-seal{transform:translate(-50%,-50%) scale(1.22);opacity:0;pointer-events:none;transition:transform .7s cubic-bezier(.3,1.5,.5,1),opacity .55s .3s}
+.lx-cover.opening .lx-seal::after{display:none}
+.lx-hint{position:absolute;left:0;right:0;top:calc(46% + min(20cqi,96px));z-index:6;text-align:center;font-family:var(--f-display);letter-spacing:.26em;text-transform:uppercase;font-size:10.5px;color:var(--i-soft);animation:breathe 2.4s ease-in-out infinite;transition:opacity .3s}
+.lx-cover.opening .lx-hint{opacity:0;animation:none}
+.lx-sp{position:absolute;inset:0;z-index:4;pointer-events:none;transition:opacity .4s}
+.lx-sp i{position:absolute;width:var(--sz);height:var(--sz);opacity:0;background:radial-gradient(circle,#FFFFFF 0 22%,#EED9A6 48%,rgba(238,217,166,0) 72%);clip-path:polygon(50% 0,57% 43%,100% 50%,57% 57%,50% 100%,43% 57%,0 50%,43% 43%);animation:twk 4s ease-in-out infinite;animation-delay:var(--dl)}
+@keyframes twk{0%,64%,100%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(0)}78%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(45deg)}}
+.lx-cover.opening .lx-sp{opacity:0}
+.lx-glow{position:absolute;left:50%;top:46%;width:0;height:0;z-index:5;pointer-events:none}
+.lx-glow::before{content:"";position:absolute;left:-55cqi;top:-55cqi;width:110cqi;height:110cqi;border-radius:50%;background:radial-gradient(circle,#FFFFFF 0,rgba(255,251,240,.96) 10%,rgba(250,226,170,.45) 24%,rgba(250,226,170,0) 58%);opacity:0;transform:scale(0);transition:transform 1.5s cubic-bezier(.2,.7,.2,1) .2s,opacity .5s .2s}
+.lx-glow i{position:absolute;left:-95cqi;top:-95cqi;width:190cqi;height:190cqi;border-radius:50%;background:repeating-conic-gradient(rgba(240,208,140,0) 0deg 6deg,rgba(236,200,128,.42) 8.5deg,rgba(240,208,140,0) 11deg 18deg);-webkit-mask:radial-gradient(circle,#000 0,rgba(0,0,0,.7) 22%,transparent 62%);mask:radial-gradient(circle,#000 0,rgba(0,0,0,.7) 22%,transparent 62%);opacity:0;transform:scale(.25);transition:opacity .9s .3s,transform 3s cubic-bezier(.2,.7,.2,1) .3s}
+.lx-cover.opening .lx-glow::before{opacity:1;transform:scale(1)}
+.lx-cover.opening .lx-glow i{opacity:1;transform:scale(1.25) rotate(50deg)}
+.lx-cover.part .lx-glow::before{transform:scale(1.9)}
+
+/* hero */
+.lx-hero{display:block;padding:0;height:100%;min-height:440px;overflow:hidden}
+.lx-hi{position:absolute;top:0;left:50%;height:100%;width:auto;aspect-ratio:var(--ar);translate:-50% 0;overflow:hidden}
+.lx-hi img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transform:translateY(var(--sy,0px));animation:lxkb 24s ease-in-out infinite alternate}
+@keyframes lxkb{from{scale:1}to{scale:1.07}}
+.lx-hi::after{content:"";position:absolute;left:0;right:0;bottom:0;height:16%;background:linear-gradient(rgba(251,250,247,0),var(--i-bg));pointer-events:none}
+.anim .lx-hi.rv{filter:none;transform:none;opacity:1}
+.lx-lamp{position:absolute;width:15%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,214,140,.85),rgba(255,196,110,.3) 38%,rgba(255,196,110,0) 70%);mix-blend-mode:screen;pointer-events:none;animation:flick 3.4s ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes flick{0%,100%{opacity:.55;transform:translate(-50%,-50%) scale(.92)}35%{opacity:.95}50%{opacity:.7;transform:translate(-50%,-50%) scale(1.06)}70%{opacity:1}}
+.lx-ht{position:absolute;display:grid;align-content:center;justify-items:center;text-align:center;gap:1.2cqi;container-type:inline-size;color:#4F4031;text-shadow:0 0 14px rgba(255,255,255,.95),0 0 4px rgba(255,255,255,.8)}
+.lx-w1{font-family:var(--f-serif);font-size:8.4cqi;letter-spacing:.05em;line-height:1.2}
+.lx-w1.sm{font-size:7.3cqi;font-style:italic}
+.lx-w2{font-family:var(--f-script);font-size:16.5cqi;line-height:1.05}
+.lx-names{margin:4.2cqi 0 0;font-family:var(--f-script);font-weight:400;font-size:24.6cqi;line-height:1.02;display:grid;justify-items:center}
+.lx-names .nm{display:block;white-space:nowrap}
+.lx-names .amp{font-size:.62em;color:var(--i-gold);line-height:1}
+.lx-names span[style]{display:inline-block}
+.anim .lx-ht>*:not(.lx-names),.anim .lx-names .amp{opacity:0;transform:translateY(12px);filter:blur(5px);transition:opacity 1.2s,transform 1.2s cubic-bezier(.2,.7,.2,1),filter 1.2s}
+.anim .lx-ht>:nth-child(1){transition-delay:.2s}.anim .lx-ht>:nth-child(2){transition-delay:.55s}.anim .lx-ht>:nth-child(3){transition-delay:.85s}.anim .lx-names .amp{transition-delay:1.5s}
+.anim .in .lx-ht>*,.anim .in .lx-names .amp{opacity:1;transform:none;filter:none}
+.anim .lx-names span[style]{opacity:0;filter:blur(6px);transform:translateY(.22em) scale(.9)}
+.anim .in .lx-names span[style]{animation:lxl 1s cubic-bezier(.2,.7,.2,1) forwards;animation-delay:calc(1.1s + var(--d)*75ms)}
+@keyframes lxl{to{opacity:1;filter:blur(0);transform:none}}
+.lx-down{position:absolute;left:0;right:0;bottom:6%;display:grid;justify-items:center;gap:0;font-family:var(--f-script);font-size:26px;color:#4F4031;text-shadow:0 0 10px #fff,0 0 3px #fff;z-index:1;transition:opacity .5s}
+.lx-down svg{width:18px;height:18px;animation:bob 1.8s ease-in-out infinite}
+
+/* sarlavhalar */
+.lx-h{margin:0;font-family:var(--f-script);font-weight:400;font-size:clamp(40px,12.6cqi,56px);line-height:1.1;color:#4F4031}
+.lx-sub{margin:-6px 0 4px;font-family:var(--f-serif);font-size:17.5px;color:var(--i-soft)}
+.lx-sub span{color:var(--i-gold);font-size:12px;vertical-align:2px}
+.lx-orn{height:auto;overflow:visible}
+
+/* tirnab ochiladigan sana */
+.lx-date{padding-top:28px}
+.lx-scr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;width:min(100%,360px)}
+.lx-tile{display:grid;gap:9px;justify-items:center;min-width:0}
+.lx-face{position:relative;width:100%;aspect-ratio:1/1.1;border-radius:16px;display:grid;place-items:center;overflow:hidden;background:linear-gradient(150deg,#FFFFFF,#F4EFE7);box-shadow:0 12px 22px -14px rgba(120,95,55,.45),inset 0 0 0 1px rgba(176,141,87,.24),inset 0 2px 0 #FFFFFF}
+.lx-face b{font-family:var(--f-serif);font-weight:500;font-size:clamp(17px,5.6cqi,25px);color:#4F4031;padding:0 4px;text-align:center;line-height:1.1}
+.lx-face canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;transition:opacity .8s}
+.lx-face::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,0) 35%,rgba(255,255,255,.8) 50%,rgba(255,255,255,0) 65%);transform:translateX(-130%);animation:lxsweep 3.4s ease-in-out infinite}
+.lx-tile:nth-child(2) .lx-face::after{animation-delay:.25s}.lx-tile:nth-child(3) .lx-face::after{animation-delay:.5s}
+@keyframes lxsweep{0%,55%{transform:translateX(-130%)}100%{transform:translateX(130%)}}
+.lx-face.touch::after,.lx-face.done::after{animation:none;opacity:0}
+.lx-face.done canvas{opacity:0;pointer-events:none}
+.lx-face.done b{animation:lxpop .9s cubic-bezier(.2,1.4,.4,1)}
+@keyframes lxpop{0%{transform:scale(.7);opacity:.3}100%{transform:none;opacity:1}}
+.lx-tap{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);border:0;padding:0}
+.lx-tile small{font-family:var(--f-display);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--i-soft)}
+.lx-dmore{margin:4px 0 0;font-family:var(--f-serif);font-style:italic;font-size:19px;color:var(--i-soft);opacity:0;transform:translateY(10px);transition:opacity 1s,transform 1s}
+.lx-date.all .lx-dmore{opacity:1;transform:none}
+
+/* bo'rtma ravoqli taklif kartasi */
+.lx-inv{gap:20px}
+.lx-card{position:relative;width:min(100%,370px);container-type:inline-size}
+.lx-crown{aspect-ratio:300/200;background:var(--crown) center/100% 100% no-repeat}
+.lx-pl{position:absolute;top:calc(66.6cqi - 1px);bottom:8.6cqi;width:7.34cqi;background:var(--pil) 0 0/100% auto repeat-y}
+.lx-pl.l{left:0}.lx-pl.r{right:0}
+.lx-body{position:relative;margin-top:-47cqi;padding:0 13cqi 7cqi;display:grid;justify-items:center;gap:2.4cqi;text-align:center}
+.lx-body .bism{font-size:clamp(14px,4.8cqi,20px)}
+.lx-cap{font-family:var(--f-serif);font-size:3.5cqi;letter-spacing:.2em;text-transform:uppercase;color:var(--i-soft);line-height:1.55}
+.lx-nm{font-family:var(--f-script);font-size:13.5cqi;line-height:1.08;color:#4F4031;text-wrap:balance}
+.lx-par{font-family:var(--f-serif);font-size:3.6cqi;letter-spacing:.14em;text-transform:uppercase;color:var(--i-soft);max-width:62cqi;line-height:1.45;text-wrap:balance}
+.lx-and{font-family:var(--f-script);font-size:9cqi;line-height:1;color:var(--i-gold)}
+.lx-base{aspect-ratio:300/26;background:var(--base) center/100% 100% no-repeat}
+.lx-card::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,rgba(255,255,255,0) 40%,rgba(255,255,255,.75) 50%,rgba(255,255,255,0) 60%);transform:translateX(-120%);mix-blend-mode:soft-light}
+.anim .lx-card.in::after{animation:lxshine 2.6s 1s ease-in-out}
+@keyframes lxshine{to{transform:translateX(120%)}}
+.lx-greet{margin:6px 0 0;font-family:var(--f-script);font-size:clamp(34px,10.5cqi,46px);line-height:1.15;color:#4F4031}
+.lx-sprig{position:absolute;width:38%;max-width:160px;pointer-events:none;overflow:visible}
+.lx-sprig.l{left:-8%;top:52%;rotate:-28deg}
+.lx-sprig.r{right:-8%;top:-10px;rotate:24deg;scale:-1 1}
+.anim .lx-sprig.rv{filter:none;transform:none}
+
+/* oyat */
+.lx-ayat{gap:12px;padding-block:36px}
+.lx-ar{font-family:var(--f-ar);font-size:clamp(30px,10cqi,42px);line-height:1.7;color:#6A5842}
+.lx-tr{margin:0;font-family:var(--f-serif);font-style:italic;font-size:20px;color:var(--i-ink)}
+.lx-ref{font-family:var(--f-serif);font-size:15px;color:var(--i-soft)}
+
+/* to'y dasturi */
+.lx-tll{position:relative;width:min(100%,390px);display:grid;gap:6px;padding:40px 0}
+.lx-line{position:absolute;left:50%;top:34px;bottom:34px;width:1px;margin-left:-.5px;background:rgba(176,141,87,.16)}
+.lx-line>i{position:absolute;inset:0;background:var(--i-gold);transform-origin:top;transform:scaleY(var(--p,0))}
+.lx-line::after{content:"";position:absolute;left:50%;top:calc(var(--p,0)*100%);width:7px;height:7px;border-radius:50%;background:#E2C27E;box-shadow:0 0 12px 4px rgba(226,194,126,.7);transform:translate(-50%,-50%)}
+.lx-fin{position:absolute;left:50%;width:16px;height:24px;transform:translateX(-50%);overflow:visible}
+.lx-fin.t{top:10px}.lx-fin.b{bottom:10px}
+.lx-ti{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;column-gap:34px;min-height:118px}
+.lx-ti .lx-tt,.lx-ti .lx-ic{grid-row:1}
+.lx-ti.l .lx-tt{grid-column:1;text-align:right}.lx-ti.l .lx-ic{grid-column:2}
+.lx-ti.r .lx-tt{grid-column:2;text-align:left}.lx-ti.r .lx-ic{grid-column:1}
+.lx-tt b{display:block;font-family:var(--f-serif);font-style:italic;font-weight:500;font-size:clamp(25px,8cqi,33px);line-height:1.1;color:#4F4031;font-variant-numeric:lining-nums}
+.lx-tt span{display:block;margin-top:4px;font-family:var(--f-serif);font-size:16.5px;line-height:1.3;color:var(--i-soft);text-wrap:balance}
+.lx-ic{width:100%;max-width:120px;justify-self:center;overflow:visible}
+.lx-dot{position:absolute;left:50%;top:50%;width:9px;height:9px;background:var(--i-bg);border:1px solid var(--i-gold);transform:translate(-50%,-50%) rotate(45deg)}
+.anim .lx-ti.l .lx-tt.rv,.anim .lx-ti.r .lx-ic.rv{transform:translateX(-34px)}
+.anim .lx-ti.r .lx-tt.rv,.anim .lx-ti.l .lx-ic.rv{transform:translateX(34px)}
+.anim .lx-ti .rv.in{transform:none}
+.anim .lx-ti .lx-ic.rv{transition-delay:.15s}
+.anim .lx-dot.rv{opacity:0;filter:none;transform:translate(-50%,-50%) rotate(45deg) scale(0);transition:transform .6s cubic-bezier(.3,1.6,.5,1),opacity .4s,background .6s .3s}
+.anim .lx-dot.rv.in{opacity:1;transform:translate(-50%,-50%) rotate(45deg);background:var(--i-gold);box-shadow:0 0 0 4px rgba(176,141,87,.14)}
+
+/* qolgan vaqt */
+.lx-cds{gap:12px}
+.lx-cd{display:flex;align-items:flex-start;justify-content:center;gap:2px;width:min(100%,380px)}
+.lx-cd div{flex:1 1 0;min-width:0;border:0;border-radius:0;background:none;padding:0;display:grid;justify-items:center;gap:4px}
+.lx-cd b{font-family:var(--f-serif);font-weight:500;font-size:clamp(34px,11.5cqi,52px);line-height:1;display:inline-block;background:linear-gradient(100deg,#9C7434,#E2C27E 42%,#B98D45 62%,#8E672B);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lx-cd b.tk{animation:lxtick .55s cubic-bezier(.2,.7,.2,1)}
+@keyframes lxtick{from{transform:translateY(-40%);opacity:0;filter:blur(3px)}}
+.lx-cd i{font-style:normal;font-family:var(--f-serif);font-size:clamp(28px,9cqi,42px);line-height:1;color:var(--i-gold);animation:lxblink 2s ease-in-out infinite}
+@keyframes lxblink{50%{opacity:.35}}
+.lx-cd small{font-family:var(--f-serif);font-size:14px;letter-spacing:.04em;text-transform:none;color:var(--i-soft)}
+
+/* manzil */
+.lx-loc{gap:14px;padding-bottom:24px}
+.lx-venue{margin:4px 0 0;font-family:var(--f-serif);font-size:22px;letter-spacing:.14em;text-transform:uppercase;color:#4F4031;text-wrap:balance}
+.lx-addr{margin:0;font-family:var(--f-serif);font-size:18px;line-height:1.45;color:var(--i-soft);max-width:28ch}
+.lx-vimg{width:calc(100% + 52px);max-width:560px;margin-top:8px;-webkit-mask:linear-gradient(transparent,#000 30%,#000 80%,transparent);mask:linear-gradient(transparent,#000 30%,#000 80%,transparent)}
+.lx-vimg img{display:block;width:100%;height:auto}
+
+/* musiqa tugmasi: o'ng pastda oltin doira */
+.lx .mus{top:auto;bottom:calc(18px + env(safe-area-inset-bottom,0px));right:calc(16px + env(safe-area-inset-right,0px));width:46px;height:46px;border:0;color:#FFFFFF;background:linear-gradient(145deg,#DDBF85,#AE8A52);box-shadow:0 8px 18px -8px rgba(120,90,40,.7);-webkit-backdrop-filter:none;backdrop-filter:none}
+.lx .mus svg{width:17px;height:17px}
+.lx .mus .pa,.lx .mus.on .pl{display:none}
+.lx .mus.on .pa{display:block}
+
+@media (prefers-reduced-motion: reduce){
+  .lx .stage,.lx-f,.lx-fw{transition:none}
+  .lx-sp i,.lx-hi img,.lx-lamp,.lx-face::after,.lx-cd i,.lx-down svg,.lx-hint{animation:none}
+  .anim .lx-names span[style],.anim .lx-ht>*,.anim .lx-names .amp{opacity:1;filter:none;transform:none;animation:none}
+  .anim .lx-ti .rv,.anim .lx-dot.rv{transition:none}
+}
