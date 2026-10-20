@@ -111,6 +111,14 @@ const TPL = {
     img: 'assets/img/oydin.webp', thumb: 'assets/img/oydin-s.webp', ar: '768/1376', box: [.08,.22,.92,.535], nf: 12.5, bism: true,
     vars: {bg:'#131F42',bg2:'#0A1430',panel:'rgba(16,30,70,.66)',paper:'#F4EAD5','l-ink':'#13204A',ink:'#F6ECD8',soft:'#B4C6E6',gold:'#E3B94E',accent:'#E9408F','on-gold':'#0B1C42','on-star':'#FFFFFF',line:'rgba(227,185,78,.45)',env:'#1B3570',env2:'#0E2153',seal:'#9C6C18',seal2:'#E6C36C',veil:'rgba(27,53,112,.62)'},
     pat: () => girih(96, 'rgba(227,185,78,.16)', 1), size: '96px', op: 1, rose: 'ikat', fx: 'dust', fxc: ['#E3B94E','#FFF1C7','#E9408F']
+  },
+  /* to'liq sahnali shablon (assets/lux.js): bo'rtma konvert, tirnab ochiladigan sana, to'y dasturi.
+     box: hero rasmdagi matn joyi, lamps: fonar nuri [chapdan %, tepadan %] */
+  oqmuhr: {
+    name: 'Oq muhr', desc: 'Bo‘rtma oq konvert, tirnab ochiladigan sana va to‘y dasturi',
+    lux: true, img: 'assets/img/oqmuhr.webp', thumb: 'assets/img/oqmuhr-s.webp', ar: '768/1376', box: [.22,.14,.78,.46], lamps: [[10,38.5],[14.5,50.5]], venue: 'assets/img/oqmuhr-joy.webp',
+    vars: {bg:'#FBFAF7',bg2:'#F4F0E9',panel:'rgba(255,255,255,.78)',paper:'#FFFFFF','l-ink':'#4E4236',ink:'#5B4B3A',soft:'#8E7F6C',gold:'#B08D57',accent:'#B08D57','on-gold':'#FFFFFF','on-star':'#FFFFFF',line:'rgba(176,141,87,.38)',env:'#F7F5F0',env2:'#ECE6DC',seal:'#E4DDD1',seal2:'#FFFFFF',veil:'transparent'},
+    pat: () => '<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"></svg>', size: '8px', op: 0, rose: 'star', fx: 'dust', fxc: ['#D9B97A','#FFFFFF','#EAD7AE']
   }
 };
 const patCache = {};

@@ -4,7 +4,8 @@ O‘zbekcha online taklifnoma yaratuvchi sayt. Statik sayt: server ham, baza ham
 
 ## Tuzilma
 - `index.html`: sahifa (konstruktor va taklifnoma)
-- `public/assets/templates.js`: shablonlar reestri (6 ta: Ganch, Samarqand, Suzani, Atlas, Xiva, Buxoro). Yangi shablon qo‘shish uchun `TEMPLATES.md` ga qarang.
+- `public/assets/templates.js`: shablonlar reestri (naqshli, rasmli va “Oq muhr” kabi to‘liq sahnali shablonlar). Yangi shablon qo‘shish uchun `TEMPLATES.md` ga qarang.
+- `public/assets/lux.js`: “Oq muhr” kabi to‘liq sahnali shablonlar (bo‘rtma konvert, tirnab ochiladigan sana, to‘y dasturi)
 - `public/assets/app.js`: taklifnoma chizish, animatsiyalar, havola yaratish, to‘yona kartasi
 - `public/assets/music.js`: musiqa (brauzerda sintez qilinadigan “Dutor kuyi” va “Nay sadosi”, yoki mezbonning mp3 havolasi)
 - `public/assets/style.css`: dizayn
