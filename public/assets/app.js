@@ -381,7 +381,8 @@ async function decode(code) {
   return JSON.parse(new TextDecoder().decode(bytes));
 }
 let BASE = '';
-try { if (window.top === window.self && /^(https?|file):$/.test(location.protocol)) BASE = location.href.split('#')[0]; } catch (e) {}
+try { if (window.top === window.self && /^(https?|file):$/.test(location.protocol)) BASE = /^https?:$/.test(location.protocol) ? location.origin + '/' : location.href.split('#')[0]; } catch (e) {}
+// Havolalar bosh sahifaga (/#id) yaratiladi: index.html ularni taklif.html ga yo‘naltiradi.
 
 /* ---------- konstruktor ---------- */
 // Buyurtma tugmasi qayerga olib boradi (Telegram yoki Instagram havolasi)
