@@ -1,3 +1,15 @@
 [build]
   publish = "public"
   functions = "netlify/functions"
+
+# Buyurtma landingi alohida havolada
+[[redirects]]
+  from = "/buyurtma"
+  to = "/buyurtma.html"
+  status = 200
+
+# Konstruktor bir muddat taklif.html da turgan; eski havolalar bosh sahifaga o'tadi (#id saqlanadi)
+[[redirects]]
+  from = "/taklif.html"
+  to = "/"
+  status = 301

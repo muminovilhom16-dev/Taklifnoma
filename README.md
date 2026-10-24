@@ -3,8 +3,8 @@
 O‘zbekcha online taklifnoma yaratuvchi sayt. Statik sayt: server ham, baza ham kerak emas.
 
 ## Tuzilma
-- `index.html`: buyurtma landing sahifasi (shablonlar galereyasi, narxlar, Telegram @m0minov). `/#id` havolalarni `taklif.html` ga yo‘naltiradi
-- `taklif.html`: konstruktor va taklifnoma ko‘rinishi
+- `index.html`: konstruktor va taklifnoma ko‘rinishi (havolalar `/#id`)
+- `buyurtma.html`: buyurtma landing sahifasi, `/buyurtma` manzilida (shablonlar galereyasi, narxlar, Telegram @m0minov)
 - `assets/landing/`: landing uslublari, skripti, hero rasmi va shablon namunasi videolari (`v/<kalit>.mp4`, `v/<kalit>.webp`)
 - `public/assets/templates.js`: shablonlar reestri (naqshli, rasmli va “Oq muhr” kabi to‘liq sahnali shablonlar). Yangi shablon qo‘shish uchun `TEMPLATES.md` ga qarang.
 - `public/assets/lux.js`: “Oq muhr” kabi to‘liq sahnali shablonlar (bo‘rtma konvert, tirnab ochiladigan sana, to‘y dasturi)
