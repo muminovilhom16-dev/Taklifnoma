@@ -392,10 +392,47 @@ async function checkKey(key) {
   if (!/^https?:$/.test(location.protocol)) return true;
   try { const r = await fetch('/api/auth', {headers: {'x-key': key}}); return r.ok; } catch (e) { return true; }
 }
+let isAdmin = false;
 function setAdmin(on) {
+  isAdmin = on;
   document.querySelectorAll('.adm').forEach(el => el.hidden = !on);
   $('#gate').hidden = on;
   $('#openfull').hidden = !on;
+  renderTpls();
+}
+
+/* ---------- yashirilgan shablonlar (admin keraksizlarini olib tashlaydi) ---------- */
+const HID_LS = 'taklif-hidden';
+let hidden = [];
+try { const h = JSON.parse(localStorage.getItem(HID_LS) || '[]'); if (Array.isArray(h)) hidden = h; } catch (e) {}
+const keepHidden = () => { try { localStorage.setItem(HID_LS, JSON.stringify(hidden)); } catch (e) {} };
+async function loadHidden() {
+  if (!/^https?:$/.test(location.protocol)) return;
+  try { const r = await fetch('/api/hidden'); const j = await r.json(); if (r.ok && Array.isArray(j.hidden)) { hidden = j.hidden; keepHidden(); } } catch (e) {}
+}
+async function saveHidden(next) {
+  const prev = hidden;
+  hidden = next; renderTpls();
+  if (!/^https?:$/.test(location.protocol)) { keepHidden(); return; }
+  try {
+    const r = await fetch('/api/hidden', {method: 'POST', headers: {'content-type': 'application/json', 'x-key': getKey()}, body: JSON.stringify({hidden})});
+    if (!r.ok) throw new Error();
+    keepHidden();
+  } catch (e) { hidden = prev; renderTpls(); alert('Saqlab bo‘lmadi. Internetni tekshirib, qaytadan urinib ko‘ring.'); }
+}
+function renderTpls() {
+  const keys = Object.keys(TPL), shown = keys.filter(k => !hidden.includes(k)), off = keys.filter(k => hidden.includes(k));
+  const card = k => { const T = TPL[k]; return `<div class="tpl-w"><button type="button" class="tpl" data-k="${k}" aria-pressed="false"><div class="sw" data-sw="${k}">${T.thumb ? `<img src="${T.thumb}" alt="" loading="lazy">` : '<div class="bgp"></div><div class="se"></div><div class="ss"></div>'}</div><b>${T.name}</b><small>${T.desc}</small></button>${isAdmin && shown.length > 1 ? `<button type="button" class="tpl-x" data-hide="${k}" title="Yashirish" aria-label="${T.name} shablonini yashirish">×</button>` : ''}</div>`; };
+  $('#tpls').innerHTML = shown.map(card).join('');
+  $('#tpls-off').hidden = !isAdmin || !off.length;
+  $('#tpls-off-n').textContent = off.length;
+  $('#tpls-off-list').innerHTML = off.map(k => `<li><span>${TPL[k].name}</span><button type="button" class="btn" data-show="${k}">Qaytarish</button></li>`).join('');
+  document.querySelectorAll('#tpls [data-sw]').forEach(el => applyVars(el, TPL[el.dataset.sw], el.dataset.sw));
+  document.querySelectorAll('#tpls .tpl').forEach(b => b.addEventListener('click', () => { state.t = b.dataset.k; syncTpl(); changed(true); }));
+  document.querySelectorAll('[data-hide]').forEach(b => b.addEventListener('click', () => saveHidden([...hidden, b.dataset.hide])));
+  document.querySelectorAll('[data-show]').forEach(b => b.addEventListener('click', () => saveHidden(hidden.filter(k => k !== b.dataset.show))));
+  if (!shown.includes(state.t) && shown.length) { state.t = shown[0]; changed(true); }
+  syncTpl();
 }
 const FIELDS = ['e','g','a','b','pa','pb','d','h','v','ad','m','p','tg','ck','cn','mu','mq','f','x','pr'];
 const SAMPLE = {t:'samarqand', e:'nikoh', a:'Jasur', b:'Madina', g:'', d:'2026-11-21', h:'18:00', v:'“Oqsaroy” to‘yxonasi', ad:'Toshkent sh., Yunusobod tumani, Amir Temur ko‘chasi, 108', m:'', p:'+998 90 123 45 67', tg:'', ck:'', cn:'', mu:'dutor', mq:'', f:'Karimovlar va Rahimovlar oilalari', x:'', pa:'', pb:'', pr:''};
@@ -404,9 +441,8 @@ try { const s = JSON.parse(localStorage.getItem('taklifnoma-draft') || 'null'); 
 
 function buildBuilder() {
   $('#f-e').innerHTML = Object.entries(EVENTS).map(([k, E]) => `<option value="${k}">${E.label}</option>`).join('');
-  $('#tpls').innerHTML = Object.entries(TPL).map(([k, T]) => `<button type="button" class="tpl" data-k="${k}" aria-pressed="false"><div class="sw" data-sw="${k}">${T.thumb ? `<img src="${T.thumb}" alt="" loading="lazy">` : '<div class="bgp"></div><div class="se"></div><div class="ss"></div>'}</div><b>${T.name}</b><small>${T.desc}</small></button>`).join('');
-  document.querySelectorAll('[data-sw]').forEach(el => applyVars(el, TPL[el.dataset.sw], el.dataset.sw));
-  document.querySelectorAll('.tpl').forEach(b => b.addEventListener('click', () => { state.t = b.dataset.k; syncTpl(); changed(true); }));
+  renderTpls();
+  loadHidden().then(renderTpls);
   FIELDS.forEach(k => { const el = $('#f-' + k); el.value = state[k] || ''; el.addEventListener('input', () => { state[k] = el.value.trim(); if (k === 'e') syncLabels(); if (k === 'mu' || k === 'ck') syncExtras(); changed(); }); });
   $('#f-file').addEventListener('change', uploadMusic);
   syncTpl(); syncLabels(); syncExtras();
