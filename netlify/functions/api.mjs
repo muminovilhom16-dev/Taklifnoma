@@ -4,6 +4,8 @@
    POST /api/music         mp3/m4a/ogg fayl (5 MB gacha), id qaytaradi
    GET  /api/music/:id     faylni beradi (Range so'rovlari bilan, iPhone uchun shart)
    GET  /api/auth          x-key sarlavhasidagi parolni tekshiradi
+   GET  /api/hidden        yashirilgan shablonlar ro'yxati
+   POST /api/hidden        {hidden: ['kalit', ...]} ro'yxatni saqlaydi
    Netlify'da TAKLIF_KEY o'zgaruvchisi qo'yilsa, yozish (POST) faqat shu parol bilan ishlaydi. */
 import { getStore } from '@netlify/blobs';
 
@@ -34,9 +36,22 @@ export default async (req) => {
   const [, , kind, id] = url.pathname.split('/');
   const invites = getStore({name: 'invites', consistency: 'strong'});
   const music = getStore({name: 'music', consistency: 'strong'});
+  const settings = getStore({name: 'settings', consistency: 'strong'});
 
   if (kind === 'auth') return authed(req) ? json({ok: true}) : json({error: 'Parol noto‘g‘ri'}, 401);
   if (req.method === 'POST' && !authed(req)) return json({error: 'Parol noto‘g‘ri'}, 401);
+  if (kind === 'hidden' && req.method === 'GET') {
+    const d = await settings.get('hidden', {type: 'json'});
+    return json({hidden: Array.isArray(d) ? d : []}, 200, {'cache-control': 'no-store'});
+  }
+  if (kind === 'hidden' && req.method === 'POST') {
+    let d;
+    try { d = await req.json(); } catch { return json({error: 'Noto‘g‘ri ma’lumot'}, 400); }
+    const list = Array.isArray(d?.hidden) ? d.hidden : null;
+    if (!list || list.length > 50 || !list.every(k => typeof k === 'string' && /^[a-z0-9]{2,24}$/.test(k))) return json({error: 'Noto‘g‘ri ma’lumot'}, 400);
+    await settings.setJSON('hidden', [...new Set(list)]);
+    return json({ok: true});
+  }
   if (kind === 'invite' && req.method === 'POST' && !id) {
     const buf = await readLimited(req, MAX_INVITE);
     if (!buf) return json({error: 'Juda katta'}, 413);

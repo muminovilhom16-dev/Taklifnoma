@@ -18,8 +18,8 @@ $('#yr').textContent = new Date().getFullYear();
 
 /* ---------- nomlar lentasi ---------- */
 const starSvg = `<svg viewBox="-12 -12 24 24" aria-hidden="true"><polygon points="${star(0, 0, 11, 5)}" fill="currentColor"/></svg>`;
-const names = ORDER.map(k => `<span>${starSvg}${TPL[k].name}</span>`).join('');
-$('#strip').innerHTML = names + names;
+const fillStrip = keys => { const names = keys.map(k => `<span>${starSvg}${TPL[k].name}</span>`).join(''); $('#strip').innerHTML = names + names; };
+fillStrip(ORDER);
 
 /* ---------- shablonlar ---------- */
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -52,6 +52,16 @@ $$('.card').forEach(card => {
   });
   th.addEventListener('pointerleave', () => { card.classList.remove('play'); v?.pause(); });
 });
+
+// Konstruktorda yashirilgan shablonlar bu yerda ham ko'rinmaydi
+fetch('/api/hidden').then(r => r.ok ? r.json() : null).then(j => {
+  const off = Array.isArray(j?.hidden) ? j.hidden : [];
+  if (!off.length) return;
+  $$('.card').forEach(c => { if (off.includes(c.dataset.k)) c.remove(); });
+  const keys = ORDER.filter(k => !off.includes(k));
+  fillStrip(keys);
+  $('#tpl-n').textContent = keys.length;
+}).catch(() => {});
 
 $$('.chip').forEach(ch => ch.addEventListener('click', () => {
   const f = ch.dataset.f;

@@ -38,6 +38,13 @@ body.solo{overflow:hidden}
 @media (max-width:640px){.tpls{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .tpl{display:grid;gap:8px;align-content:start;padding:10px 10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface);text-align:left;cursor:pointer;color:inherit;font:inherit;transition:border-color .2s,box-shadow .2s,transform .2s}
 .tpl:hover{transform:translateY(-2px)}
+.tpl-w{position:relative;display:grid}
+.tpl-x{position:absolute;top:4px;right:4px;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:18px;line-height:1;cursor:pointer;box-shadow:0 4px 10px -4px rgba(0,0,0,.35)}
+.tpl-x:hover{color:#B3263A;border-color:#B3263A}
+.tpls-off{margin-top:14px;border:1px dashed var(--line);border-radius:12px;padding:10px 14px}
+.tpls-off summary{cursor:pointer;font-weight:600}
+.tpls-off ul{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:8px}
+.tpls-off li{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .tpl[aria-pressed="true"]{border-color:var(--lapis);box-shadow:0 0 0 3px var(--ring)}
 .tpl:focus-visible{outline:2px solid var(--lapis);outline-offset:2px}
 .tpl b{font-family:var(--f-display);font-weight:400;font-size:17px}
